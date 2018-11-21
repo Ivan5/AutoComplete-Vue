@@ -3,12 +3,12 @@
     <div class="input" @click="toggleVisible" v-text="selectedItem ? selectedItem[filterby] : '' ">
 
     </div>
-    <div class="placeholder" v-if="selectedItem == null" v-text="tittle || 'Select one'">
+    <div class="placeholder" v-if="selectedItem == null" v-text="title || 'Select one'">
 
     </div>
     <div class="popover" v-show="visible">
-      <input type="text" v-model="query" placeholder="Start Typing..">
-      <div class="options">
+      <input type="text" v-model="query" placeholder="Start Typing.." @keydown.up="up" @keydown.down="down" @keydown.enter="selectItem" ref="input">
+      <div class="options" ref="optionsList">
         <ul>
           <li
             v-for="(item,index) in matches"
@@ -28,6 +28,7 @@ export default {
   props:['items','filterby','title'],
   data(){
     return{
+      itemHeight:39,
       selectedItem: null,
       selected:0,
       visible:false,
@@ -37,6 +38,9 @@ export default {
   methods:{
     toggleVisible(){
       this.visible = !this.visible
+      setTimeout(() => {
+        this.$refs.input.focus();
+      },50);
     },
     itemClick(index){
       this.selected = index;
@@ -45,10 +49,31 @@ export default {
     selectItem(){
       this.selectedItem = this.matches[this.selected];
       this.visible = false;
+
+      this.$emit('selected', JSON.parse(JSON.stringify(this.selectedItem)));
+    },
+    up(){
+      if(this.selected == 0){
+        return;
+      }
+      this.selected -= 1;
+      this.scrollToItem()
+    },
+    down(){
+      if(this.selected >= this.matches.length -1){
+        return;
+      }
+      this.selected += 1;
+      this.scrollToItem()
+
+    },
+    scrollToItem(){
+      this.$refs.optionsList.scrollTop = this.selected * this.itemHeight
     }
   },
   computed:{
     matches(){
+      this.$emit('change',this.query);
       if(this.query == ''){
         return []
       }

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Autocomplete :items="customers" filterby="name"/>
+    <Autocomplete :items="customers" filterby="name" title="" @selected="customerSelected" @change="onChange"/>
   </div>
 </template>
 
@@ -19,6 +19,14 @@ export default {
   data(){
     return{
       customers : []
+    }
+  },
+  methods:{
+    customerSelected(customer){
+      console.log(customer);
+    },
+    onChange(value){
+      console.log(value);
     }
   },
   components: {
