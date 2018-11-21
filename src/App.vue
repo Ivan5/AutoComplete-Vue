@@ -1,28 +1,37 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Autocomplete />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Autocomplete from './components/Autocomplete.vue'
 
+import axios from 'axios';
 export default {
   name: 'app',
+  mounted(){
+    axios.get('https://jsonplaceholder.typicode.com/users')
+      .then((response) => {
+        this.customers = response.data;
+      })
+  },
+  data(){
+    return{
+      customers : []
+    }
+  },
   components: {
-    HelloWorld
-  }
+    Autocomplete
+  },
+
 }
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  margin: 0px auto;
   margin-top: 60px;
+  width: 400px;
 }
 </style>
