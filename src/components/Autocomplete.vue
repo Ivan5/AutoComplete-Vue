@@ -1,13 +1,22 @@
 <template lang="html">
   <div class="autocomplete">
-    <div class="input" @click="toggleVisible">
+    <div class="input" @click="toggleVisible" v-text="selectedItem ? selectedItem[filterby] : '' ">
+
+    </div>
+    <div class="placeholder" v-if="selectedItem == null" v-text="tittle || 'Select one'">
 
     </div>
     <div class="popover" v-show="visible">
       <input type="text" v-model="query" placeholder="Start Typing..">
       <div class="options">
         <ul>
-          <li v-for="(item,index) in matches" :key="item.id" v-text="item[filterby]" @click="itemClick(index)"> </li>
+          <li
+            v-for="(item,index) in matches"
+            :key="item.id"
+            :class="{'selected' : (selected == index)}"
+            v-text="item[filterby]"
+            @click="itemClick(index)">
+          </li>
         </ul>
       </div>
     </div>
@@ -16,9 +25,11 @@
 
 <script>
 export default {
-  props:['items','filterby'],
+  props:['items','filterby','title'],
   data(){
     return{
+      selectedItem: null,
+      selected:0,
       visible:false,
       query:''
     }
@@ -28,7 +39,12 @@ export default {
       this.visible = !this.visible
     },
     itemClick(index){
-      console.log(this.items[index]);
+      this.selected = index;
+      this.selectItem();
+    },
+    selectItem(){
+      this.selectedItem = this.matches[this.selected];
+      this.visible = false;
     }
   },
   computed:{
@@ -94,5 +110,19 @@ ul li{
   padding: 10px;
   cursor: pointer;
   background: #f1f1f1;
+}
+.options ul li.selected{
+  background: #58bd4c;
+  color:#fff;
+  font-weight: 600;
+}
+
+.placeholder{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 25px;
+  color: lightgray;
+  pointer-events: none;
 }
 </style>
