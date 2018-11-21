@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Autocomplete />
+    <Autocomplete :items="customers" filterby="name"/>
   </div>
 </template>
 
